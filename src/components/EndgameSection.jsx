@@ -17,13 +17,12 @@ const EndgameSection = ({
   return (
     <div className="endgame-section">
       <div className="endgame-header">
-        <Target className="endgame-icon" />
         <div>
           <h2>{remainingSolutions.length} Remaining Solutions</h2>
           <p>
             {searchMode === 'strategic' 
-              ? 'Strategic move shown above may not be one of these (burner word)'
-              : 'Best guess shown above is one of these words'}
+              ? 'Strategic move shown below may not be one of these (burner word)'
+              : 'Best guess shown below is one of these words'}
           </p>
         </div>
       </div>

@@ -172,11 +172,11 @@ self.onmessage = (e) => {
     }
     
     results.sort((a, b) => b.entropy - a.entropy);
-    self.postMessage({ 
+      self.postMessage({ 
       type: 'bestCandidates', 
-      candidates: results.slice(0, 5),
+      candidates: results.slice(0, 50),  
       searchedCount: candidatesToSearch.length,
       searchMode: searchMode
-    });
+  });
   }
 };

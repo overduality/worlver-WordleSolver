@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Display list of top candidate guesses with their entropy scores
+ * Display list of top candidate guesses - SIDEBAR VERSION (Top 20)
  */
 const CandidatesList = ({ 
   candidates, 
@@ -10,17 +10,18 @@ const CandidatesList = ({
   onFilterChange, 
   onWordSelect 
 }) => {
+  // In strategic mode: "Hide solutions" shows only burners
+  // In greedy mode: Always show solutions only
+  // When filtering, we need to get more candidates to ensure we have 20 after filtering
   const displayedCandidates = filterSolutions 
-    ? candidates.filter(c => c.isSolution)
-    : candidates;
-
-  if (candidates.length === 0) return null;
+    ? candidates.filter(c => !c.isSolution).slice(0, 20) // Filter first, then take 20
+    : candidates.slice(0, 20); // Just take top 20
 
   return (
-    <div className="candidates-section">
+    <>
       <div className="candidates-header">
         <h3>
-          {searchMode === 'strategic' ? 'Top 5 Strategic Moves' : 'Top 5 Solutions to Try'}
+          {searchMode === 'strategic' ? 'Top 20 Strategic' : 'Top 20 Solutions'}
         </h3>
         {searchMode === 'strategic' && (
           <label className="toggle-label">
@@ -29,44 +30,47 @@ const CandidatesList = ({
               checked={filterSolutions}
               onChange={(e) => onFilterChange(e.target.checked)}
             />
-            <span>Hide burner words</span>
+            <span>Hide solutions</span>
           </label>
         )}
       </div>
+
       <div className="candidates-list">
-        {displayedCandidates.map((candidate, index) => (
-          <div 
-            key={candidate.word} 
-            className={`candidate-item ${candidate.isSolution ? 'is-solution' : ''}`}
-            onClick={() => onWordSelect(candidate.word)}
-            role="button"
-            tabIndex={0}
-          >
-            <div className="candidate-rank">#{index + 1}</div>
-            <div className="candidate-info">
-              <div className="candidate-word">
-                {candidate.word}
-                {!candidate.isSolution && searchMode === 'strategic' && (
-                  <span className="burner-tag">BURNER</span>
-                )}
-              </div>
-              <div className="candidate-meta">
-                {candidate.isSolution 
-                  ? `${candidate.winProbability}% win chance` 
-                  : 'Pure information play'} • 
-                {' '}{candidate.rawEntropy.toFixed(3)} bits
+        {displayedCandidates.length === 0 ? (
+          <p className="no-results">
+            {filterSolutions 
+              ? 'All top moves are solutions. Uncheck to see them.'
+              : 'No candidates available'}
+          </p>
+        ) : (
+          displayedCandidates.map((candidate, index) => (
+            <div 
+              key={candidate.word} 
+              className={`candidate-item ${candidate.isSolution ? 'is-solution' : ''}`}
+              onClick={() => onWordSelect(candidate.word)}
+              role="button"
+              tabIndex={0}
+            >
+              <div className="candidate-rank">#{index + 1}</div>
+              <div className="candidate-info">
+                <div className="candidate-word">
+                  {candidate.word}
+                  {!candidate.isSolution && searchMode === 'strategic' && (
+                    <span className="burner-tag">BURNER</span>
+                  )}
+                </div>
+                <div className="candidate-meta">
+                  {candidate.isSolution 
+                    ? `${candidate.winProbability}% win` 
+                    : 'Info play'} • 
+                  {' '}{candidate.rawEntropy.toFixed(2)} bits
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-      {searchMode === 'strategic' && filterSolutions && displayedCandidates.length === 0 && (
-        <p className="no-results">
-          All top moves are burner words (non-solutions). 
-          This is correct strategic play for maximum information gain.
-        </p>
-      )}
-    </div>
+    </>
   );
 };
 

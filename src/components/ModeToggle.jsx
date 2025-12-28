@@ -1,17 +1,13 @@
 import React from 'react';
 import { Target, Zap } from 'lucide-react';
 
-/**
- * Toggle between Strategic and Greedy search modes
- */
-const ModeToggle = ({ searchMode, onModeChange }) => {
+const ModeToggle = ({ searchMode, setSearchMode }) => {
   return (
     <div className="mode-toggle-section">
       <div className="mode-toggle">
         <button
           className={`mode-btn ${searchMode === 'strategic' ? 'active' : ''}`}
-          onClick={() => onModeChange('strategic')}
-          aria-pressed={searchMode === 'strategic'}
+          onClick={() => setSearchMode('strategic')}
         >
           <Target size={16} />
           Strategic
@@ -19,8 +15,7 @@ const ModeToggle = ({ searchMode, onModeChange }) => {
         </button>
         <button
           className={`mode-btn ${searchMode === 'greedy' ? 'active' : ''}`}
-          onClick={() => onModeChange('greedy')}
-          aria-pressed={searchMode === 'greedy'}
+          onClick={() => setSearchMode('greedy')}
         >
           <Zap size={16} />
           Greedy
