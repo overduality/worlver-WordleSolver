@@ -276,12 +276,33 @@ h1 {
   line-height: 1.5;
 }
 
-/* Stats grid */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+/* Stats grid - REMOVED from main content, now only in sidebar */
+
+/* SIDEBAR STATS - NEW COMPACT VERSION */
+.sidebar-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stat-card.compact {
+  padding: 0.75rem;
+}
+
+.stat-card.compact .stat-header h3 {
+  font-size: 0.7rem;
+}
+
+.stat-card.compact .stat-value {
+  font-size: 1.25rem;
+  margin-bottom: 0.125rem;
+}
+
+.stat-card.compact .stat-meta {
+  font-size: 0.7rem;
 }
 
 .stat-card {
@@ -343,7 +364,7 @@ h1 {
   to { transform: rotate(360deg); }
 }
 
-/* Endgame section */
+/* Endgame section
 .endgame-section {
   margin-bottom: 2rem;
 }
@@ -364,9 +385,9 @@ h1 {
 .endgame-header p {
   color: var(--text-secondary);
   font-size: 0.875rem;
-}
+} */
 
-.solution-cards {
+/* .solution-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
@@ -404,7 +425,7 @@ h1 {
 
 .win-prob {
   font-weight: 600;
-}
+} */
 
 /* Candidates section */
 .candidates-section {
@@ -464,6 +485,46 @@ h1 {
   border-color: var(--success-border);
   background: var(--success-bg);
 }
+.candidate-item.top-candidate,
+.app.dark .candidate-item.top-candidate,
+.app.light .candidate-item.top-candidate,
+.candidate-item.is-solution.top-candidate {
+  background-color: #15803d !important;
+  border-color: #14532d !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(21, 128, 61, 0.2);
+}
+
+.candidate-item.top-candidate .candidate-rank,
+.candidate-item.top-candidate .candidate-word,
+.candidate-item.top-candidate .candidate-meta {
+  color: #ffffff !important;
+}
+
+.candidate-item.top-candidate .burner-tag {
+  background-color: #ffffff !important;
+  color: #15803d !important;
+}
+
+.guess-card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.guess-card .letter-grid {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.guess-card .feedback-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
 
 .candidate-rank {
   font-size: 0.875rem;
@@ -515,11 +576,6 @@ h1 {
   margin-bottom: 2rem;
 }
 
-.guesses-section h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
 
 .guess-card {
   background: var(--bg-tertiary);
@@ -529,18 +585,18 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.guess-header {
+/* .guess-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
-}
+} */
 
-.guess-number {
+/* .guess-number {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text-tertiary);
-}
+} */
 
 .guess-word {
   font-size: 1.25rem;
@@ -813,7 +869,7 @@ button {
 
 .app-container {
   display: grid;
-  grid-template-columns: 1fr 420px;
+  grid-template-columns: 65fr 35fr;
   gap: 2.5rem;
   max-width: 1600px;
   margin: 0 auto;
@@ -832,7 +888,7 @@ button {
   overflow-y: auto;
 }
 
-/* LETTER INPUT (NEW) */
+/* LETTER INPUT */
 .letter-input-container {
   outline: none;
   display: flex;
@@ -873,30 +929,31 @@ button {
 
 .input-actions {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem; 
   width: 100%;
-  max-width: 36rem;
-  align-items: stretch;
+  max-width: 32rem; 
+  align-items: center;
+  margin: 0 auto;
 }
 
 .submit-guess-btn {
-  flex: 2;
-  height: 3.5rem;
+  flex: 1;
+  height: 2.75rem;
+  padding: 0 1rem;
+  font-size: 0.875rem;
   justify-content: center;
-  font-size: 1rem;
   font-weight: 600;
 }
 
-.input-actions .btn-secondary {
-  flex: 1;
-  height: 3.5rem;
-  font-size: 1rem;
+.input-actions .btn-secondary,
+.input-actions .btn-icon-only {
+  height: 2.75rem; 
+  font-size: 0.875rem;
 }
 
 .input-actions .btn-icon-only {
-  flex-shrink: 0;
-  height: 3.5rem;
-  width: 3.5rem;
+  width: 2.75rem;
+  padding: 0;
 }
 
 .action-buttons {
@@ -926,7 +983,7 @@ button {
   border-color: var(--accent-primary);
 }
 
-/* MODAL STYLES */
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -1082,6 +1139,7 @@ button {
   align-items: center;
   gap: 1rem;
 }
+
 
 .bar-label {
   font-family: 'IBM Plex Mono', 'Courier New', monospace;

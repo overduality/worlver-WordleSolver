@@ -45,7 +45,7 @@ function App() {
 
   // Derived state
   const remainingSolutions = possibleIndices.map(idx => solutions[idx]);
-  const isEndGame = possibleIndices.length <= 5 && possibleIndices.length > 1;
+  const isEndGame = false; 
   const isSolved = possibleIndices.length === 1;
 
   // Auto-compute best candidates when possibleIndices changes
@@ -136,7 +136,7 @@ function App() {
               <div>
                 <h1>
                   <Brain className="icon" />
-                  Wordle Solver
+                  Worvler
                 </h1>
                 <p className="subtitle">
                   Mode: {searchMode === 'strategic' ? 'Strategic (Max Info)' : 'Greedy (Lucky Guess)'} • 
@@ -169,54 +169,8 @@ function App() {
               setSearchMode={setSearchMode}
             />
 
-            {/* Only show game UI if not solved and solutions exist */}
-            {!isSolved && possibleIndices.length > 0 && (
-              <>
-                {/* Stats Grid */}
-                <div className="stats-grid">
-                  <StatCard
-                    icon={searchMode === 'strategic' ? Target : Zap}
-                    title={searchMode === 'strategic' ? 'Best Strategic Move' : 'Best Solution'}
-                    value={topCandidates.length > 0 ? topCandidates[0].word : '—'}
-                    meta={topCandidates.length > 0 
-                      ? (topCandidates[0].isSolution 
-                        ? `${topCandidates[0].winProbability}% direct win`
-                        : 'Maximum information gain')
-                      : null
-                    }
-                    isComputing={computing}
-                    computeProgress={computeProgress}
-                    isPrimary={true}
-                    darkMode={darkMode}
-                    topCandidates={topCandidates}
-                  />
 
-                  <StatCard
-                    icon={List}
-                    title="Remaining"
-                    value={possibleIndices.length}
-                    meta={
-                      possibleIndices.length === solutions.length ? 'Full dictionary' : 
-                      possibleIndices.length <= 20 ? 'Narrowing down' : 'Filtering...'
-                    }
-                    isComputing={false}
-                    isPrimary={false}
-                  />
-                </div>
-
-                {/* Endgame Section - Show remaining solutions */}
-                {isEndGame && (
-                  <EndgameSection
-                    remainingSolutions={remainingSolutions}
-                    topCandidates={topCandidates}
-                    searchMode={searchMode}
-                    onWordSelect={(word) => setCurrentGuess(word)}
-                  />
-                )}
-              </>
-            )}
-
-            {/* Guess History */}
+            {/* Guess History*/}
             {guesses.length > 0 && (
               <GuessHistory
                 guesses={guesses}
@@ -266,9 +220,44 @@ function App() {
           </div>
         </div>
 
-        {/* Sidebar - Candidates List */}
+        {/* Sidebar */}
         <aside className="sidebar">
           <div className="candidates-sidebar">
+            {!isSolved && possibleIndices.length > 0 && (
+              <div className="sidebar-stats">
+                <StatCard
+                  icon={searchMode === 'strategic' ? Target : Zap}
+                  title={searchMode === 'strategic' ? 'Best Strategic Move' : 'Best Solution'}
+                  value={topCandidates.length > 0 ? topCandidates[0].word : '—'}
+                  meta={topCandidates.length > 0 
+                    ? (topCandidates[0].isSolution 
+                      ? `${topCandidates[0].winProbability}% direct win`
+                      : 'Maximum information gain')
+                    : null
+                  }
+                  isComputing={computing}
+                  computeProgress={computeProgress}
+                  isPrimary={true}
+                  darkMode={darkMode}
+                  topCandidates={topCandidates}
+                  isCompact={true}
+                />
+
+                <StatCard
+                  icon={List}
+                  title="Remaining"
+                  value={possibleIndices.length}
+                  meta={
+                    possibleIndices.length === solutions.length ? 'Full dictionary' : 
+                    possibleIndices.length <= 20 ? 'Narrowing down' : 'Filtering...'
+                  }
+                  isComputing={false}
+                  isPrimary={false}
+                  isCompact={true}
+                />
+              </div>
+            )}
+
             <CandidatesList
               candidates={topCandidates}
               searchMode={searchMode}

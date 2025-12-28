@@ -2,6 +2,7 @@ import React from 'react';
 
 /**
  * Display list of top candidate guesses - SIDEBAR VERSION (Top 20)
+ * Top 1 candidate gets blue highlight
  */
 const CandidatesList = ({ 
   candidates, 
@@ -10,12 +11,9 @@ const CandidatesList = ({
   onFilterChange, 
   onWordSelect 
 }) => {
-  // In strategic mode: "Hide solutions" shows only burners
-  // In greedy mode: Always show solutions only
-  // When filtering, we need to get more candidates to ensure we have 20 after filtering
   const displayedCandidates = filterSolutions 
-    ? candidates.filter(c => !c.isSolution).slice(0, 20) // Filter first, then take 20
-    : candidates.slice(0, 20); // Just take top 20
+    ? candidates.filter(c => !c.isSolution).slice(0, 20) 
+    : candidates.slice(0, 20); 
 
   return (
     <>
@@ -46,7 +44,7 @@ const CandidatesList = ({
           displayedCandidates.map((candidate, index) => (
             <div 
               key={candidate.word} 
-              className={`candidate-item ${candidate.isSolution ? 'is-solution' : ''}`}
+              className={`candidate-item ${candidate.isSolution ? 'is-solution' : ''} ${index === 0 ? 'top-candidate' : ''}`}
               onClick={() => onWordSelect(candidate.word)}
               role="button"
               tabIndex={0}

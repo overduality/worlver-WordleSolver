@@ -9,16 +9,16 @@ const StrategyInfo = ({ darkMode, topCandidates }) => {
   // Calculate entropy data from actual top candidates
   useEffect(() => {
     if (topCandidates && topCandidates.length > 0) {
-      // Get top 8 candidates and format for visualization
+      // top 8 candidates and format for visualization
       const data = topCandidates.slice(0, 8).map(candidate => {
         const entropy = candidate.rawEntropy;
         let color;
         
         // Color based on entropy value
-        if (entropy >= 5.5) color = '#22c55e'; // Green - excellent
-        else if (entropy >= 4.5) color = '#3b82f6'; // Blue - good
-        else if (entropy >= 3) color = '#f59e0b'; // Yellow - mediocre
-        else color = '#ef4444'; // Red - poor
+        if (entropy >= 5.5) color = '#22c55e'; 
+        else if (entropy >= 4.5) color = '#3b82f6'; 
+        else if (entropy >= 3) color = '#f59e0b'; 
+        else color = '#ef4444'; 
         
         return {
           word: candidate.word.toUpperCase(),
