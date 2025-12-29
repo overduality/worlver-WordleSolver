@@ -1,144 +1,116 @@
-# Wordle Solver Pro
+# Worvler
 
-A strategic Wordle solver that uses entropy-based analysis to suggest optimal guesses. Choose between strategic mode (maximum information gain) or greedy mode (direct solution attempts).
+Wordle solver powered by information theory and entropy maximization.
 
-## Features
+![Wordle Solver](https://img.shields.io/badge/React-18.x-blue) ![Web Workers](https://img.shields.io/badge/Web_Workers-Enabled-green)
 
-- **Strategic Mode**: Analyzes entire dictionary for maximum entropy reduction, may suggest "burner words"
-- **Greedy Mode**: Only considers possible solutions for faster gameplay
-- **Real-time Analysis**: Pre-computed pattern matrix for instant recommendations
-- **Dark/Light Theme**: Toggle between themes for comfortable viewing
-- **Responsive Design**: Works on desktop and mobile devices
+## Overview
 
-## Architecture
-
-### Core Algorithm
-- Pre-computes feedback pattern matrix (14k×2.3k) on startup
-- Uses base-3 encoding for efficient pattern matching
-- Implements Shannon entropy for information-theoretic optimal play
-- Zero-allocation worker architecture for GC-free computation
-
-### Strategic vs Greedy
-- **Strategic**: Searches full dictionary, prioritizes entropy (information gain)
-- **Greedy**: Searches only possible solutions, prioritizes win probability
-
-## Project Structure
+Worvler uses **information theory** to find the optimal guess at each step. It precomputes a pattern matrix of all possible guess-answer combinations and calculates **Shannon entropy** to identify guesses that eliminate the most possibilities.
 
 ```
-wordle-solver-pro/
-├── src/
-│   ├── components/          # React components
-│   │   ├── CandidatesList.jsx
-│   │   ├── EndgameSection.jsx
-│   │   ├── ErrorScreen.jsx
-│   │   ├── FeedbackInput.jsx
-│   │   ├── GuessHistory.jsx
-│   │   ├── LoadingScreen.jsx
-│   │   ├── ModeToggle.jsx
-│   │   └── StatCard.jsx
-│   ├── hooks/               # Custom React hooks
-│   │   └── useWordleWorker.js
-│   ├── styles/              # CSS stylesheets
-│   │   └── App.css
-│   ├── utils/               # Utility functions
-│   │   └── wordUtils.js
-│   ├── workers/             # Web Workers
-│   │   └── wordleWorker.js
-│   ├── App.jsx             # Main application component
-│   └── main.jsx            # Entry point
-├── public/                  # Static assets
-│   ├── wordle-answers.txt  # Official Wordle solutions
-│   └── words.txt           # Full dictionary
-├── index.html
-├── package.json
-├── vite.config.js
-└── README.md
+H(X) = -Σ p(x) × log₂(p(x))
 ```
 
-## Getting Started
+Higher entropy = better guess = more information gained.
 
-### Prerequisites
-- Node.js 18+ 
-- npm or yarn
+## Key Features
 
-### Installation
+### Two Solving Strategies
 
-1. Clone the repository:
+**Strategic Mode** (Default)
+- Searches entire dictionary for maximum entropy
+- Utilizes non-solution words to maximize information gain
+- Optimizes for minimum expected guesses
+- Example: Suggests CHAMP to differentiate BATCH/MATCH/HATCH
+
+**Greedy Mode**
+- Restricts search space to remaining possible solutions
+- Maximizes immediate win probability
+- Higher variance in guess count distribution
+
+### Performance Optimization
+
+- **Pattern Matrix**: Precomputed 12,972 × 2,315 = 30M+ patterns
+- **Web Worker**: Non-blocking UI during computation
+- **Entropy Calculation**: Real-time analysis of remaining solutions
+
+## Implementation
+
+1. **Pattern Matrix Generation**: Encodes all guess-target feedback patterns in base-3 representation (gray=0, yellow=1, green=2)
+
+2. **Entropy Calculation**: For each candidate guess, computes partition uniformity across remaining solution space
+
+3. **Optimal Selection**: Selects guess maximizing expected information gain
+
+## Theoretical Foundation
+
+### Information Gain
+Optimal first guesses such as TARSE or SALET achieve approximately 6.3 bits of entropy through:
+- High-frequency letter coverage (T, A, R, S, E)
+- Positional diversity testing
+- Maximal partition of solution space
+
+### Strategic vs Greedy Comparison
+| Strategy | Search Space | Win Bonus | Optimization Target |
+|----------|-------------|-----------|---------------------|
+| Strategic | Full dictionary | 0.01 bits | Expected guess count |
+| Greedy | Solutions only | log₂(n) bits | Immediate win probability |
+
+## Installation
+
 ```bash
-git clone <repository-url>
-cd wordle-solver-pro
-```
+# Clone repository
+git clone https://github.com/overdensity/worlver-WordleSolver.git
+cd worlver-WordleSolver
 
-2. Install dependencies:
-```bash
+# Install dependenciesr
 npm install
-```
 
-3. Add word lists to `/public`:
-- `wordle-answers.txt` - Official Wordle solution words (one per line)
-- `words.txt` - Full dictionary of valid 5-letter words (one per line)
+# Add word lists to /public folder
+# - wordle-answers.txt (2,315 official solutions)
+# - words.txt (12,972 valid guesses)
 
-4. Start development server:
-```bash
+# Run development server
 npm run dev
 ```
 
-5. Open browser to `http://localhost:3000`
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-Output will be in `/dist` directory.
-
 ## Usage
 
-1. **Choose Search Mode**: Toggle between Strategic (entropy maximization) or Greedy (solution gambling)
-2. **Enter Guess**: Type your guess word
-3. **Input Feedback**: Click letters to cycle through gray → yellow → green
-4. **Submit**: Get next optimal guess based on remaining possibilities
-5. **Repeat**: Until solution is found
+1. **Input guess** - Enter any valid 5-letter word
+2. **Provide feedback** - Click letters to cycle through feedback states: gray → yellow → green
+3. **Receive optimal suggestion** - System computes best next guess using selected strategy
+4. **Iterate** until solution converges
 
-## Algorithm Details
+## Tech Stack
 
-### Pattern Matrix
-- Feedback encoded as base-3 number: gray=0, yellow=1, green=2
-- Pre-computed matrix avoids runtime pattern calculation
-- Uint8Array for memory efficiency (243 possible patterns)
+- **React 18** - UI framework
+- **Web Workers** - Background computation
+- **Lucide React** - Icons
+- **Vanilla CSS** - Styling with CSS variables
 
-### Entropy Calculation
-```
-H(X) = -Σ p(x) log₂(p(x))
-```
-Where p(x) is the probability of each feedback pattern.
+## Algorithm Complexity
 
-### Mode-Specific Bonuses
-- **Strategic**: `winBonus = 0.01` (minimal tie-breaker for solutions)
-- **Greedy**: `winBonus = log₂(n)` (aggressive solution preference)
+- **Preprocessing**: O(D × S) = O(30M) one-time
+  - D = dictionary size (12,972)
+  - S = solutions size (2,315)
+  
+- **Per-guess Analysis**: O(D × S × 243)
+  - 243 possible feedback patterns (3^5)
+  - Strategic mode searches full dictionary
+  - Greedy mode searches only remaining solutions
 
-## Performance
 
-- Matrix build: ~2-3 seconds
-- Per-guess analysis: <100ms for strategic, <50ms for greedy
-- Memory: ~35MB for pattern matrix
-- Zero GC during computation (pre-allocated TypedArrays)
+## References
 
-## Contributing
 
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+Shannon, C. E. (1948). "A Mathematical Theory of Communication". Bell System Technical Journal, 27(3), 379–423. doi:10.1002/j.1538-7305.1948.tb01338.x
 
-## License
+3Blue1Brown. (2022). [Solving Wordle using information theory](https://youtu.be/v68zYyaEmEA?si=yiGRhyZN4xhq3_YG)
 
-MIT License - see LICENSE file for details
+3Blue1Brown. (2022). [Oh, wait, actually the best Wordle opener is not “crane”…](https://youtu.be/fRed0Xmc2Wg?si=yG9mRJY8OuH8YzZQ)
 
-## Acknowledgments
 
-- Information theory approach inspired by 3Blue1Brown's Wordle analysis
-- Original Wordle by Josh Wardle
-- Pattern matrix optimization technique from various solver implementations
+---
+
+**Note**: Requires `wordle-answers.txt` and `words.txt` in `/public` directory to run.
